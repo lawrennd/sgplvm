@@ -27,6 +27,9 @@ if(nargin<7)
     end
   end
 end
+if(~isfield(options,'balancing')||isempty(options.balancing))
+  options.balancing = 1;
+end
 if(~strcmp(model.type,'sgplvm'))
   error('Wrong Model Type');
 end
