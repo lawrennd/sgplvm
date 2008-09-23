@@ -1,7 +1,7 @@
 clear all close all;
 
 % 1. Set types
-sgplvm_model_type = 'back1';%'standard';
+sgplvm_model_type = 'mlmi2007';%'nips2006';
 data_type = 'rand';
 nr_iters = 3;
 
@@ -18,7 +18,7 @@ switch data_type
 end
 
 % 3. Learn Initialisation through NCCA
-[Xsy Xsz Xy Xz] = nccaEmbed(Ky,Kz,[60 85],uint8(1),[40 95],true);
+[Xsy Xsz Xy Xz] = nccaEmbed(Ky,Kz,uint8([6 6]),uint8(2),uint8([2 2]),true);
 
 Xs = (1/2).*(Xsy+Xsz);
 X_init = [Xy Xs Xz];
@@ -26,14 +26,14 @@ X_init = (X_init-repmat(mean(X_init),size(X_init,1),1))./repmat(std(X_init),size
 
 % 4. Create SGPLVM model
 switch sgplvm_model_type
- case 'standard'
+ case 'nips2006'
   options_y = fgplvmOptions('fitc');
   options_y.optimiser = 'scg';
   options_y.scale2var1 = true;
   options_y.initX = X_init;
   
   model{1} = fgplvmCreate(size(options_y.initX,2),size(Y_train,2),Y_train,options_y);
-  model{1} = sgplvmSetLatentDimension(model{1},'gen',[1:1:size([Xy Xs],2)],true);
+  model{1} = sgplvmSetLatentDimension(model{1},'gen',1:1:size(X_init,2),true);
     
   options_z = fgplvmOptions('fitc');
   options_z.optimiser = 'scg';
@@ -41,33 +41,39 @@ switch sgplvm_model_type
   options_z.initX = X_init;
   
   model{2} = fgplvmCreate(size(options_z.initX,2),size(Z_train,2),Z_train,options_z);
-  model{2} = sgplvmSetLatentDimension(model{2},'gen',[size(Xy,2)+1:1:size(X_init,2)],true);
+  model{2} = sgplvmSetLatentDimension(model{2},'gen',1:1:size(X_init,2),true);
  
   options = sgplvmOptions;
   options.save_intermediate = inf;
-  options.name = 'sgplvm_ncca_test_';
+  options.name = 'nips2006';
   options.initX = zeros(2,size(X_init,2));
   options.initX(1,:) = true;
   options.initX(2,:) = false;
   
   model = sgplvmCreate(model,[],options);
- case 'dynamic'
+ case 'mlmi2007'
   options_y = fgplvmOptions('fitc');
   options_y.optimiser = 'scg';
   options_y.scale2var1 = true;
   options_y.initX = X_init;
-  
+ 
   model{1} = fgplvmCreate(size(options_y.initX,2),size(Y_train,2),Y_train,options_y);
-  model{1} = sgplvmSetLatentDimension(model{1},'gen',[1:1:size([Xy Xs],2)],true);
+  model{1} = sgplvmSetLatentDimension(model{1},'gen',1:1:size(X_init,2),true);
     
   options_z = fgplvmOptions('fitc');
   options_z.optimiser = 'scg';
   options_z.scale2var1 = true;
   options_z.initX = X_init;
+  options_z.back = 'kbr';
+  options_z.backOptions.kern = kernCreate(Y_train,'rbf');
+  options_z.backOptions.X = Y_train;
+  options_z.backOptions.kern.inverseWidth = 3e-1;
+  options_z.optimiseInitBack = true;  
   
   model{2} = fgplvmCreate(size(options_z.initX,2),size(Z_train,2),Z_train,options_z);
-  model{2} = sgplvmSetLatentDimension(model{2},'gen',[size(Xy,2)+1:1:size(X_init,2)],true);
- 
+  model{2} = sgplvmSetLatentDimension(model{2},'gen',1:1:size(X_init,2),true);
+  model{2} = sgplvmSetLatentDimension(model{2},'back',1:1:size(X_init,2),true);
+  
   options = sgplvmOptions;
   options.save_intermediate = inf;
   options.name = 'sgplvm_ncca_test_';
@@ -79,7 +85,7 @@ switch sgplvm_model_type
 
   model = sgplvmAddDynamics(model,'gp',[size(Xy,2)+1:1:size(X_init,2)],[size(Xy,2)+1:1:size(X_init,2)],X_init,gpOptions('ftc'),1,1,seq);
   
- case 'back1'
+ case 'mlmi2008'
   options_y = fgplvmOptions('fitc');
   options_y.optimiser = 'scg';
   options_y.scale2var1 = true;
