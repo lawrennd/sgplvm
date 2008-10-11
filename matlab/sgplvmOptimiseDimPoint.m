@@ -4,6 +4,7 @@ function X = sgplvmOptimiseDimPoint(model,X,dim,display,iters)
 % FORMAT
 % DESC Takes a model and a latent location 
 
+  
 if(nargin<5)
   iters = 100;
   if(nargin<4)

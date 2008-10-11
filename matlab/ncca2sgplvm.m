@@ -13,9 +13,9 @@ function model = ncca2sgplvm(model_ncca,options)
 % SEEALSO : nccaOptions, nccaCreate, modelCreate, fgplvmOptions, sgplvmCreate
 % sgplvmSetLatentDimension
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2008
+% COPYRIGHT : Neil D. Lawrence and Carl Henrik Ek, 2008
 
-% NCCA
+% SGPLVM
 
 Y = model_ncca.fy.y;
 Z = model_ncca.fz.y;

@@ -1,3 +1,7 @@
+% DEMSGPLVM Demonstrate teh SGPLVM.
+
+% SGPLVM
+
 clear all close all;
 
 % 1. Set types

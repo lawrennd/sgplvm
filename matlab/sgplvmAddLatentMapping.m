@@ -1,5 +1,6 @@
 function model = sgplvmAddLatentMapping(model,model_id,dim_obs_in,dim_latent_in,dim_out,type,name,nr_iters,varargin)
 
+  
 X = [model.comp{model_id}.y(:,dim_obs_in) model.X(:, ...
 						  dim_latent_in)];
 y = model.X(:,dim_out);

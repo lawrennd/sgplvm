@@ -1,6 +1,6 @@
 function X = sgplvmOptimiseDimVarSequence(model_obs,model_dyn,X,dim,balancing,display,iters,gradcheck,optimiser)
 
-% SGPLVMOPTIMISEDIMVAR Optimise subspace of latent sequence
+% SGPLVMOPTIMISEDIMVARSEQUENCE Optimise subspace of latent sequence
 % FORMAT
 % DESC Takes a fgplvm model and finds the latent location
 % minimizing the variance on the output space
@@ -18,7 +18,7 @@ function X = sgplvmOptimiseDimVarSequence(model_obs,model_dyn,X,dim,balancing,di
 %
 % SEEALSO : sgplvmOptimiseDimVar
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2008
+% COPYRIGHT : Neil D. Lawrence and Carl Henrik Ek, 2008
 
 % SGPLVM
 

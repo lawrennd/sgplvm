@@ -1,6 +1,6 @@
 function f = sgplvmObjective(params,model)
 
-% FGPLVMOBJECTIVE Wrapper function for GP-LVM objective.
+% SGPLVMOBJECTIVE Wrapper function for GP-LVM objective.
 % FORMAT
 % DESC provides a wrapper function for the sgplvm, updating the
 % model parameters and returning the negative log likelihood of the
@@ -11,7 +11,7 @@ function f = sgplvmObjective(params,model)
 %
 % SEEALSO : sgplvmLogLikelihood, sgplvmExpandParam
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007
+% COPYRIGHT : Neil D. Lawrence and Carl Henrik Ek, 2007
 
 % SGPLVM
 

@@ -1,6 +1,7 @@
 function [mu varSigma] = sgplvmOut(model,Y,index_in,index_out,type,varargin)
 
-
+% SGPLVMOUT 
+  
 % Check Arguments
 if(~strcmp(model.type,'sgplvm'))
   error('Wrong Model Type');
