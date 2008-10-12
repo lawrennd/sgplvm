@@ -1,4 +1,4 @@
-Version 0.1
------------
+Version 0.05
+------------
 
-First version of the shared GP-LVM toolbox.
+First public version of the shared GP-LVM toolbox with limited documentation.
