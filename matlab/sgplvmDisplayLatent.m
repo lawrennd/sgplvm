@@ -1,5 +1,11 @@
 function [C X Y] = sgplvmDisplayLatent(model,y,N,display,fid)
 
+% SGPLVMDISPLAYLATENT
+%
+% COPYRIGHT : Carl Henrik Ek, 2008
+
+% SGPLVM
+
 if(nargin<5)
   fid = 1;
   if(nargin<4)

@@ -1,5 +1,11 @@
 function model = sgplvmAddBackMapping(model,model_id,dim,type,nr_iters,varargin)
 
+% SGPLVMADDBACKMAPPING
+%
+% COPYRIGHT : Carl Henrik Ek, 2008
+
+% SGPLVM
+
 model.back = true;
 model.back_id(model_id,dim) = true;
 

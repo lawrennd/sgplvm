@@ -1,5 +1,11 @@
 function model = sgplvmAddInverseMapping(model,model_id,dim_in,dim_out,type,name,nr_iters,varargin)
 
+% SGPLVMADDINVERSEMAPPING
+%
+% COPYRIGHT : Carl Henrik Ek, 2008
+
+% SGPLVM
+
 X = model.comp{model_id}.y(:,dim_in);
 y = model.X(:,dim_out);
 

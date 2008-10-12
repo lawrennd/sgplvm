@@ -7,7 +7,7 @@ clear all close all;
 % 1. Set types
 sgplvm_model_type = 'mlmi2008';%'mlmi2007';%'nips2006';
 data_type = 'human';
-nr_iters = 100;
+nr_iters = 30;
 
 % 2. Load Data
 switch data_type
@@ -116,10 +116,6 @@ switch sgplvm_model_type
   options_z.optimiser = 'scg';
   options_z.scale2var1 = true;
   options_z.initX = X_init;
-%  options_z.backOptions.kern = kernCreate(Z_train,'rbf');
-%  options_z.backOptions.X = Z_train;
-%  options_z.backOptions.kern.inverseWidth = 2;
-%  options_z.optimiseInitBack = true;
   
   model{2} = fgplvmCreate(size(options_z.initX,2),size(Z_train,2),Z_train,options_z);
   model{2} = sgplvmSetLatentDimension(model{2},'gen',[size(Xy,2)+1:1:size(X_init,2)],true);
@@ -144,7 +140,8 @@ model = sgplvmOptimise(model,true,nr_iters,false,false);
 
 switch data_type
  case 'human'
-  sgplvmVisualise(model,[],'xyzankurVisualise','xyzankurModify',Y_train,'ncca12',100,Z_train);
+  sgplvmVisualise(model,[],'xyzankurVisualise','xyzankurModify', ...
+		  Y_train([2 9],:),'ncca12',100,Z_train([2 9],:));
  otherwise
   
 end
