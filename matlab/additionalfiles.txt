@@ -1,0 +1,3 @@
+# These are files that should be packaged for the SGPLVM software
+dir: html
+~/mlprojects/sgplvm/html/index.html

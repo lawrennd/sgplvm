@@ -1,0 +1,18 @@
+<head>
+<title>Shared Gaussian Process Latent Variable Models - MATLAB Software</title>
+</head>
+
+<body><div class="section">
+
+<h1>Fast GP-LVM Software</h1>
+
+<p>This page describes examples of how to use the Gaussian process latent variable models with shared latent spaces (SGPLVM).
+
+RELEASEINFORMATION
+
+<h2>Release Notes</h2>
+
+<h3>Current Release</h3>
+
+First release of software.
+
