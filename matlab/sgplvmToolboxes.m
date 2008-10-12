@@ -10,3 +10,4 @@ importLatest('mltools');
 importLatest('kern');
 importLatest('gp');
 importLatest('fgplvm');
+importLatest('ncca');
