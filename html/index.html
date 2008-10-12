@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>Shared Gaussian Process Latent Variable Model - MATLAB Software</title>
+</head>
+
+<body><dic class="section">
+<h1>Shared GP-LVM Software</h1>
+
+
+
+
+
+<!-- hhmts start -->
+<hr>
+<address></address>
+<p>This page describes examples of how to use the shared Gaussian process latent variable model Software (SGPLVM).
+
+RELEASEINFORMATION
+
+
+<h2>Release Notes</h2>
+
+<h3>Current Release</h3>
+
+<h4>Version 0.05</h4>
+
+First public release with limited documentation
+
+<h2>Examples</h2>
+
+<h3>SGP-LVM</h3>
+
+<p><code>
+&gt;&gt; demSgplvm
+</code>
+<br>
+<br>
+Demo script to create three different types of Shared GP-LVM models
+either using random data or a synthetic example of human motion.
+
+<p><code>
+&gt;&gt; sgplvm_model_type = 'mlmi2008';<br>
+&gt;&gt; data_type = 'human';
+</code>
+<br>
+<br>
+
+The motion example was created by rotating a static pose around its
+own axis both counter-clockwise and clockwise but use the same
+descriptors which introduces ambiguities with respect to the heading
+direction in the view-plane.
+
+The SGP-LVM model created has a five dimensional latent space with two
+private directions for each observation space and a single shared
+direction. The model is initialised using the NCCA consolidation.
+
+<p><center><img src="K_sil.tif" width="29%"><img src="K_pose.tif" width="29%"><br>
+
+Kernel matrices to which NCCA consolidation is used to initialise the
+SGP-LVM model.
+
+<p><center><img src="latent1.tif" width="29%"><img src="mode1.tif" width="29%"><br>
+
+Unimodal silhouette. 
+
+<p><center><img src="latent2.tif" width="29%"><img src="mode9_top.tif" width="29%"><img src="mode9_bottom.tif" width="29%"><br>
+
+Bi-modal silhouette
+
+<br><br>
+Last modified: Sun Oct 12 10:40:49 CEST 2008
+
+<!-- hhmts end -->
+</body> </html>
