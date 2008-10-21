@@ -72,7 +72,7 @@ direction. The model is initialised using the NCCA consolidation.
 
 
 
-<p><center><img src="K_sil.tif" width="29%"><img src="K_pose.tif" width="29%"><br>
+<p><center><img src="K_sil.png" width="29%"><img src="K_pose.png" width="29%"><br>
 
 
 
@@ -82,7 +82,7 @@ SGP-LVM model.
 
 
 
-<p><center><img src="latent1.tif" width="29%"><img src="mode1.tif" width="29%"><br>
+<p><center><img src="latent1.png" width="29%"><img src="mode1.png" width="29%"><br>
 
 
 
@@ -90,7 +90,7 @@ Unimodal silhouette.
 
 
 
-<p><center><img src="latent2.tif" width="29%"><img src="mode9_top.tif" width="29%"><img src="mode9_bottom.tif" width="29%"><br>
+<p><center><img src="latent2.png" width="29%"><img src="mode9_top.png" width="29%"><img src="mode9_bottom.png" width="29%"><br>
 
 
 

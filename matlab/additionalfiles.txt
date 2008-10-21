@@ -1,9 +1,11 @@
 # These are files that should be packaged for the SGPLVM software
+dir: .
+~/mlprojects/sgplvm/matlab/nccaDemoData.mat
 dir: html
 ~/mlprojects/sgplvm/html/index.html
-~/mlprojects/sgplvm/html/K_pose.tif
-~/mlprojects/sgplvm/html/mode1.tif
-~/mlprojects/sgplvm/html/K_sil.tif
-~/mlprojects/sgplvm/html/latent1.tif
-~/mlprojects/sgplvm/html/latent2.tif
-~/mlprojects/sgplvm/html/mode9_bottom.tif
+~/mlprojects/sgplvm/html/K_pose.png
+~/mlprojects/sgplvm/html/mode1.png
+~/mlprojects/sgplvm/html/K_sil.png
+~/mlprojects/sgplvm/html/latent1.png
+~/mlprojects/sgplvm/html/latent2.png
+~/mlprojects/sgplvm/html/mode9_bottom.png
