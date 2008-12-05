@@ -108,7 +108,6 @@ switch type
   else
     Y = [];
   end
-  
   if(display)
     % display output variance
     fhandle = figure(fid);

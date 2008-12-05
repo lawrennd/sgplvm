@@ -1,4 +1,4 @@
-% DEMSGPLVM Demonstrate teh SGPLVM.
+% DEMSGPLVM Demonstrate the SGPLVM.
 
 % SGPLVM
 
@@ -7,7 +7,7 @@ clear all close all;
 % 1. Set types
 sgplvm_model_type = 'mlmi2008';%'mlmi2007';%'nips2006';
 data_type = 'human';
-nr_iters = 30;
+nr_iters = 100;
 
 % 2. Load Data
 switch data_type
@@ -30,7 +30,7 @@ else
 end
 
 % 3. Learn Initialisation through NCCA
-[Xsy Xsz Xy Xz] = nccaEmbed(Ky,Kz,uint8([6 6]),uint8(1),uint8([2 2]),true);
+[Xsy Xsz Xy Xz] = nccaEmbed(Y_train,Z_train,uint8([7 7]),uint8(1),uint8([2 2]),true);
 
 Xs = (1/2).*(Xsy+Xsz);
 X_init = [Xy Xs Xz];

@@ -99,7 +99,7 @@ switch type
       figure(fid_latent);
       [x1 x2 button] = ginput(1);
       if(button==1)
-	if(length(dim_orthogonal==2))
+	if(length(dim_orthogonal)==2)
 	  XZ(dim_orthogonal) = [x1 x2];
 	else
 	  XZ(dim_orthogonal) = x1;
