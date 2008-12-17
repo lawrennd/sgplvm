@@ -118,7 +118,7 @@ switch type
       hold on;
       axis on;
     else
-      plot(X,C);
+      plot(X_inv,C);
     end
   else
     fhandle = [];

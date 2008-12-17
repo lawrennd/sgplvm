@@ -84,7 +84,8 @@ switch type
       Trans = model.dynamics.comp{index_dyn}.Trans_train;
     end
   end
-  if(~exist(Trans,'var'))
+  if(~isfield(model.dynamics.comp{index_dyn},'Trans_train')||~ ...
+       isempty(model.dynamics.comp{index_dyn}.Trans_train))
     %2. Compute Translation Probabilities
     Trans = gpComputeTranslationLogLikelihood(model.dynamics.comp{index_dyn},Xlabel,verbose);
     switch type

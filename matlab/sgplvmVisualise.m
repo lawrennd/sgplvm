@@ -1,4 +1,4 @@
-function [C Xout Yout latent_axis] = sgplvmVisualise(model,Ylbls,visualiseFunction,visualiseModify,Y,type,N,Z,display,fid,verbose)
+function [C Xout Yout latent_axis] = sgplvmVisualise(model,Ylbls,visualiseFunction,visualiseModify,Y,type,N,Z,display,fid,verbose,varargin)
 
 % SGPLVMVISUALISE Display sgplvm model
 % FORMAT
@@ -86,7 +86,7 @@ switch type
     dim_orthogonal = find(isnan(XZ));
     %4. Display Ground Truth
     if(~isempty(Z)&&size(Z,1)>=i)
-      handle_gt = visFunc(Z(i,:),fid_latent+2);title('Ground Truth');
+      handle_gt = visFunc(Z(i,:),fid_latent+1,varargin{:});title('Ground Truth');
     end
     %2. Map points
     button = 1;
@@ -114,13 +114,12 @@ switch type
 		   z];
 	%3. Display Mapped point
 	if(~exist('handle_vis','var'))
-	  handle_vis = visFunc(z,fid_latent+1);title('Output');
+	  handle_vis = visFunc(z,fid_latent+2,varargin{:});title('Output');
 	else
-	  handle_vis = modFunc(handle_vis,z);
+	  handle_vis = modFunc(handle_vis,z,varargin{:});title('Output');
 	end
       end
     end
-    
   end
     
  case {'point','transfer'}
