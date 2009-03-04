@@ -13,7 +13,7 @@ function g = sgplvmLogLikeGradients(model)
 % SEEALSO : sgplvmLogLikelihood, sgplvmCreate,
 % modelLogLikeGradients
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007, 2009
 
 % SGPLVM
 
@@ -44,6 +44,14 @@ for(i = 1:1:model.numModels)
     if(model.inducing_id(i,j) && model.comp{i}.fixInducing)
       g_full{i}{gX_ind}(model.comp{i}.inducingIndices,j) = g_full{i}{gX_ind}(model.comp{i}.inducingIndices,j) + g_full{i}{gX_u_ind}(:,j);
     end
+  end
+end
+
+% constraint part
+gX_constraints_dim = zeros(model.N,model.q);
+if(isfield(model,'constraints')&&~isempty(model.constraints))
+  for(i = 1:1:model.constraints.numConstraints)
+    gX_constraints_dim = gX_constraints_dim + constraintLogLikeGradients(model.constraints.comp{i});
   end
 end
 
@@ -86,6 +94,10 @@ for(i = 1:1:model.q)
     else
       gX_dim = gX_prior_dim(:,1);
     end
+  end
+  
+  if(isfield(model,'constraints')&&~isempty(model.constraints))
+    gX_dim = gX_dim + gX_constraints_dim(:,i);
   end
   
   % back-constraints

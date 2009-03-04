@@ -11,7 +11,7 @@ function f = sgplvmObjective(params,model)
 %
 % SEEALSO : sgplvmLogLikelihood, sgplvmExpandParam
 %
-% COPYRIGHT : Neil D. Lawrence and Carl Henrik Ek, 2007
+% COPYRIGHT : Neil D. Lawrence and Carl Henrik Ek, 2007, 2009
 
 % SGPLVM
 
@@ -32,3 +32,5 @@ CURRENT_ITERATION = CURRENT_ITERATION + 1;
 % update models
 model = sgplvmExpandParam(model,params);
 f = - sgplvmLogLikelihood(model);
+
+return

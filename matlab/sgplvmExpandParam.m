@@ -12,7 +12,7 @@ function model = sgplvmExpandParam(model,params)
 %
 % SEEALSO : sgplvmCreate, sgplvmExtractParam, modelExpandParam
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007, 2009
 
 % SGPLVM
 
@@ -63,5 +63,10 @@ if(isfield(model,'dynamic'))
   end
 end
 
-
+% Update Constraint Part
+if(isfield(model,'constraints')&&~isempty(model.constraints))
+  for(i = 1:1:model.constraints.numConstraints)
+    model.constraints.comp{i} = constraintExpandParam(model.constraints.comp{i}, model.X);
+  end
+end
 

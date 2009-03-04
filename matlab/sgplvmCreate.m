@@ -10,7 +10,7 @@ function model = sgplvmCreate(m,void,options)
 %
 % SEEALSO : sgplvmOptions
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007, 2009
 
 % SGPLVM
 
@@ -127,6 +127,18 @@ end
 if(~isfield(model,'dynamic'))
   model.dynamic = false;
   model.dynamic_id = [];
+end
+
+% Constraint part
+for(i = 1:1:model.numModels)
+  if(isfield(m{i},'constraint'))
+    model.constraint = true;
+    model = sgplvmAddConstraint(model,m{i});
+  end
+end
+if(~isfield(model,'constraint'))
+  model.constraint = true;
+  model.constraint_id = [];
 end
 
 % inducing part
@@ -247,6 +259,9 @@ for(i = 1:1:nr_parameter_chunks)
     end
   end
 end
+
+% Constraint part
+
 
 % force kernel computation
 initParams = sgplvmExtractParam(model);

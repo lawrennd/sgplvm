@@ -8,7 +8,7 @@ function ll = sgplvmLogLikelihood(model)
 %
 % SEEALSO : fgplvmLogLikelihood, sgplvmCreate
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007, 2009
 
 % SGPLVM
 
@@ -73,5 +73,12 @@ for(i = 1:1:model.numModels)
       end
     end
    otherwise
+  end
+end
+
+% 4. constraint
+if(isfield(model,'constraints')&&~isempty(model.constraints))
+  for(i = 1:1:model.constraints.numConstraints)
+    ll = ll - constraintLogLikelihood(model.constraints.comp{i},model.X);
   end
 end
