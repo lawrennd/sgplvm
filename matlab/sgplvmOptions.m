@@ -15,3 +15,4 @@ function options = sgplvmOptions
 options.optimiser = 'scg';
 options.name = 'sgplvm_';
 options.save_intermediate = inf;
+options.fols = [];

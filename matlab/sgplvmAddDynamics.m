@@ -27,6 +27,18 @@ if(nargin<7)
     end
   end
 end
+if(isfield(options,'balancing')&&isstr(options.balancing))
+  switch options.balancing
+   case 'urtasun'
+    dim_y = 0;
+    for(i = 1:1:model.numModels)
+      dim_y = dim_y + model.comp{i}.d;
+    end
+    options.balancing = (dim_y/model.numModels)*(length(dim_in)/model.q);
+   otherwise
+    error('Unknown balancing type');
+  end
+end
 if(~isfield(options,'balancing')||isempty(options.balancing))
   options.balancing = 1;
 end

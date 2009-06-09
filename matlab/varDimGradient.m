@@ -15,7 +15,7 @@ function g = varDimGradient(params,model,X,dim)
 
 % SGPLVM
 
-X(dim) = params;
+X(:,dim) = params;
 
 [void g] = gpPosteriorGradMeanVar(model,X);
 g = g(dim,1)';

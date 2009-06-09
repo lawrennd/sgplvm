@@ -5,9 +5,9 @@
 clear all close all;
 
 % 1. Set types
-sgplvm_model_type = 'mlmi2008';%'mlmi2007';%'nips2006';
+sgplvm_model_type = 'dgplvm'%'mlmi2008';%'mlmi2007';%'nips2006';
 data_type = 'human';
-nr_iters = 100;
+nr_iters = 10;
 
 % 2. Load Data
 switch data_type
@@ -130,18 +130,62 @@ switch sgplvm_model_type
   model = sgplvmCreate(model,[],options);
 
   model = sgplvmAddDynamics(model,'gp',[size(Xy,2)+1:1:size(X_init,2)],[size(Xy,2)+1:1:size(X_init,2)],X_init,gpOptions(approx),1,1,seq);
+ case 'dgplvm'
+  
+  options_y = fgplvmOptions(approx);
+  options_y.optimiser = 'scg';
+  options_y.scale2var1 = true;
+  
+  X_init = X_init(:,1:2);
+  
+  options_y.initX = X_init;
+  
+  model{1} = fgplvmCreate(size(options_y.initX,2),size(Y_train,2),Y_train,options_y);
+  model{1} = sgplvmSetLatentDimension(model{1},'gen',1:1:size(X_init,2),true);
+  
+  options_z = fgplvmOptions(approx);
+  options_z.optimiser = 'scg';
+  options_z.scale2var1 = true;
+  options_z.initX = X_init;
+  
+  model{2} = fgplvmCreate(size(options_z.initX,2),size(Z_train,2),Z_train,options_z);
+  model{2} = sgplvmSetLatentDimension(model{2},'gen',1:1:size(X_init,2),true);
+  
+  options = sgplvmOptions;
+  options.save_intermediate = inf;
+  options.name = 'dgplvm';
+  options.initX = zeros(2,size(X_init,2));
+  options.initX(1,:) = true;
+  options.initX(2,:) = false;
+  
+  model = sgplvmCreate(model,[],options);
+  
+  % add discriminative constraints
+  options_constraint = constraintOptions(model,'LDA');
+  options_constraint.class = zeros(model.N,1);
+  options_constraint.N = model.N;
+  options_constraint.q = model.q;
+  options_constraint.class(1:1) = 2;
+  %options_constraint.class(30:50) = 3;
+  options_constraint.dim = 1;%:1:model.q;
+  options_constraint.lambda = 1e6;
+  model = sgplvmAddConstraint(model,options_constraint);
+  
+  options_constraint.dim = 1:2:model.q;
+  options_constraint.class(2:1:5) = 3;
+  %model = sgplvmAddConstraint(model,options_constraint);
   
  otherwise
   error('Unkown SGPLVM Type');
 end
 
 % 5. Train SGPLVM model
-model = sgplvmOptimise(model,true,nr_iters,false,false);
+model = sgplvmOptimise(model,true,nr_iters,true,false);
 
 switch data_type
  case 'human'
-  sgplvmVisualise(model,[],'xyzankurVisualise','xyzankurModify', ...
-		  Y_train([2 9],:),'ncca12',100,Z_train([2 9],:));
+%  sgplvmVisualise(model,[],'xyzankurVisualise','xyzankurModify', ...
+%		  Y_train([2 9],:),'ncca12',100,Z_train([2 9],:));
  otherwise
   
 end

@@ -1,6 +1,6 @@
-function ll = sgplvmLogLikelihood(model)
+function ll = sgplvmLogLikelihood(model,verbose)
 
-% SGPLVMLOGLIKELIHOOD Log-likelihood for a sGP-LVM.
+% SGPLVMLOGLIKELIHOOD Log-likelihood for a SGP-LVM.
 % FORMAT
 % DESC Returns the log likelihood for the given sgplvm model
 % ARG model : sgplvm model
@@ -9,8 +9,19 @@ function ll = sgplvmLogLikelihood(model)
 % SEEALSO : fgplvmLogLikelihood, sgplvmCreate
 %
 % COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007, 2009
+%
+% MODIFICATIONS : Mathieu Salzmann, Carl Henrik Ek, 2009
 
 % SGPLVM
+
+if(nargin<2)
+  verbose = false;
+end
+if(verbose)
+  ll_part_name = {'GP','P/Dyn','Approx','Const','Rank_A','Rank_G','CCA'};
+  ll_part = zeros(1,length(ll_part_name));
+end
+
 
 ll = 0;
 
@@ -18,6 +29,11 @@ ll = 0;
 for(i = 1:1:model.numModels)
   ll = ll + gpLogLikelihood(model.comp{i});
 end
+if(verbose)
+  ll_part(1) = ll;
+end
+
+
 % 2. latent prior
 if(isfield(model,'dynamics')&&~isempty(model.dynamics))
   % dynamic prior
@@ -63,6 +79,10 @@ else
     end
   end
 end
+if(verbose)
+  ll_part(2) = ll - ll_part(1);
+end
+
 % 3. sparse approximation
 for(i = 1:1:model.numModels)
   switch model.comp{i}.approx
@@ -75,6 +95,9 @@ for(i = 1:1:model.numModels)
    otherwise
   end
 end
+if(verbose)
+  ll_part(3) = ll - sum(ll_part);
+end
 
 % 4. constraint
 if(isfield(model,'constraints')&&~isempty(model.constraints))
@@ -82,3 +105,60 @@ if(isfield(model,'constraints')&&~isempty(model.constraints))
     ll = ll - constraintLogLikelihood(model.constraints.comp{i},model.X);
   end
 end
+if(verbose)
+  ll_part(4) = ll - sum(ll_part);
+end
+
+
+% 5. rank constraints
+if(isfield(model.fols,'rank')&&(model.fols.rank.alpha.weight>0))
+  start = model.fols.qs+1;
+  %private ranks
+  for i=1:length(model.fols.qp)
+    S = svd(model.X(:,find(model.generative_id(i,:))));
+    S2 = S.*S;
+    ll = ll - model.fols.rank.alpha.weight*sum(log(1+model.fols.rank.beta.weight*S2/model.fols.rank.alpha.rel_alphas(i)));
+    if(verbose)
+      ll_part(5) = ll_part(5) + ll - sum(ll_part);
+    end
+    %energy loss penalty
+    if(model.fols.rank.gamma.weight > 0)
+      dE = model.fols.sumS2(i) - sum(S2);
+      ll = ll - (model.fols.rank.gamma.weight/model.fols.rank.alpha.rel_alphas(i))*dE*dE;
+    end
+    if(verbose)
+      ll_part(6) = ll_part(6) + ll - sum(ll_part);
+    end
+    start = start+model.fols.qp(i);
+  end
+end
+
+% 6. CCA constraints
+if(isfield(model.fols,'ortho')&&(model.fols.ortho.weight>0))
+    nd = length(model.fols.qp);
+    qsi = model.fols.qs;
+    for i=1:nd
+        Xy = model.X(:,find(model.generative_id(i,:)));
+        for j=i+1:nd
+            Xz = model.X(:,find(model.generative_id(j,:)));
+            dp = (Xy(:,qsi+1:end)'*Xz(:,qsi+1:end));%./(model.N*model.N);
+            ll = ll - model.fols.ortho.weight*trace(dp*dp');
+        end
+    end
+    dp = (model.X(:,1:model.fols.qs)'*model.X(:,model.fols.qs+1:end));%./(model.N*model.N);
+    ll = ll - model.fols.ortho.weight*trace(dp*dp');
+end
+if(verbose)
+  ll_part(7) = ll - sum(ll_part);
+end
+
+if(verbose)
+  fprintf('\nNegative LogLikelihood Components\n');
+  ll_part = -ll_part;
+  for(i = 1:1:length(ll_part))
+    fprintf('%s:\t\t%2.3f\n',ll_part_name{i},100.*abs(ll_part(i))./sum(abs(ll_part)));
+  end
+  fprintf('\n');
+end
+
+return;

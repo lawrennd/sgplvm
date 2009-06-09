@@ -30,7 +30,7 @@ end
 f = - sgplvmLogLikelihood(model);
 if nargout > 1
   g = - sgplvmLogLikeGradients(model);
-end
-if transpose
-  g = g';
+  if transpose
+    g = g';
+  end
 end

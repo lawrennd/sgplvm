@@ -15,9 +15,9 @@ function f = varDimObjective(params,model,X,dim)
 
 % SGPLVM
 
-X(dim) = params;
+X(:,dim) = params;
 
 [void f] = gpPosteriorMeanVar(model,X);
-f = f(:,1);
+f = f(1,1);
 
 return;

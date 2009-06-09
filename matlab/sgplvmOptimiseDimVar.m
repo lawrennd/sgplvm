@@ -43,6 +43,7 @@ options(1) = display;
 
 optFunc = str2func(optimiser);
 
+
 for(i = 1:1:size(X,1))
   X(i,dim) = optFunc('varDimObjective',X(i,dim),options,'varDimGradient',model,X(i,:),dim);
 end

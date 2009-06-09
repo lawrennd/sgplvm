@@ -10,7 +10,9 @@ function model = sgplvmCreate(m,void,options)
 %
 % SEEALSO : sgplvmOptions
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007, 2009
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, Mathieu Salzmann, 2007, 2009
+%
+% MODIFICATIONS : Carl Henrik Ek, Mathieu Salzmann, 2009
 
 % SGPLVM
 
@@ -43,7 +45,7 @@ for(i = 1:1:model.numModels-1)
 end
 model.q = m{1}.q;
 model.N = m{1}.N;
-if(isfield(model,'optimiser'))
+if(isfield(options,'optimiser'))
   model.optimiser = options.optimiser;
 else
   model.optimiser = 'scg';
@@ -52,7 +54,7 @@ end
 % back constrained part
 model.back = false;
 for(i = 1:1:model.numModels)
-  if(isfield(m{i},'back'))
+  if(isfield(m{i},'back')&&~isempty(model.back))
     model.back = true;
   end
 end
@@ -85,6 +87,8 @@ if(model.back)
       model.back_id(i,m{i}.back.indexOut) = true;
     end
   end
+else
+  model.back_id = zeros(model.numModels,model.q);
 end
 
 % generative part
@@ -260,7 +264,39 @@ for(i = 1:1:nr_parameter_chunks)
   end
 end
 
-% Constraint part
+
+% FOLS model
+if(isfield(options,'fols')&&~isempty(options.fols))
+  model.fols = options.fols;
+
+  % set initalisation weights
+  model.fols.rank.alpha.weight_init = model.fols.rank.alpha.weight;
+  model.fols.rank.beta.weight_init = model.fols.rank.beta.weight;
+  model.fols.rank.gamma.weight_init = model.fols.rank.gamma.weight;
+  model.fols.ortho.weight_init = model.fols.ortho.weight;
+
+  model.fols.qs = length(sgplvmGetDimension(model,'shared'));
+  model.fols.qp = zeros(1,model.numModels);
+  for(i = 1:1:model.numModels)
+    model.fols.qp(i) = length(sgplvmGetDimension(model,'private',i));
+  end
+  S = svd(model.X(:,1:model.fols.qs));
+  sS2 = sum(S.*S);
+  for(i = 1:1:length(model.fols.qp))
+    if(m{i}.isMissingData)
+      index_present = m{i}.indexPresent{1};
+      for(j = 2:1:m{i}.d)
+        index_present = intersect(index_present,m{i}.indexPresent{j});
+      end
+    else
+      index_present = 1:1:m{i}.N;
+    end
+    S = svd(m{i}.y(index_present,:));
+    model.fols.sumS2(i) = sum(S.*S);
+    S = svd(model.X(:,find(model.generative_id(i,:))));
+  end
+  model.fols.rank.alpha.rel_alphas = model.fols.sumS2./max(model.fols.sumS2);
+end
 
 
 % force kernel computation

@@ -1,4 +1,4 @@
-function model = sgplvmOptimise(model,display,iters,g_check,save_flag)
+function model = sgplvmOptimise(model,display,iters,g_check,save_flag,options_sgplvm)
 
 % SGPLVMOPTIMISE Optimise the SGPLVM.
 % FORMAT
@@ -17,6 +17,8 @@ function model = sgplvmOptimise(model,display,iters,g_check,save_flag)
 % SEEALSO : sgplvmObjective, sgplvmGradient
 %
 % COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007
+%
+% MODIFICATIONS : Mathieu Salzmann, Carl Henrik Ek, 2009
 
 % SGPLVM
 
@@ -35,10 +37,9 @@ if(nargin<5)
     end
   end
 end
-    
+
 global CURRENT_ITERATION;
 CURRENT_ITERATION = 0;
-
 
 params = sgplvmExtractParam(model);
 options = optOptions;
@@ -67,9 +68,36 @@ end
 if strcmp(func2str(optim), 'optimiMinimize')
   % Carl Rasmussen's minimize function 
   params = optim('sgplvmObjectiveGradient', params, options, model);
+elseif strcmp(func2str(optim), 'fmincon')
+    %constrained optimization
+    if(exist('g_check') && g_check)
+        Options=optimset('MaxFunEvals',10*iters,'MaxIter',iters,'GradObj','on','GradConstr','on','DerivativeCheck','on','Display','iter','Algorithm','interior-point','SubproblemAlgorithm','cg');
+    else
+        Options=optimset('MaxFunEvals',10*iters,'MaxIter',iters,'GradObj','on','GradConstr','on','DerivativeCheck','off','Display','iter','Algorithm','interior-point','SubproblemAlgorithm','cg');
+    end
+    params = optim(@sgplvmObjectiveGradient, params', [], [], [], [], [], [], @sgplvmConstraintsGradient, Options, model);
+    params = params';
 else
   % NETLAB style optimization.
-  params = optim('sgplvmObjective', params,  options, 'sgplvmGradient', model);
+  if(model.fols.cropp&&exist('options_sgplvm','var'))
+    options(14) = model.fols.cropp_iter;
+    iteration = CURRENT_ITERATION;
+    if(isfield(model,'iteration')&&~isempty(model.iteration))
+      iteration = iteration + model.iteration;
+    end
+    for(i = 1:1:round(iters/model.fols.cropp_iter))
+      model = sgplvmWeightUpdate(model,iteration,true);                                  
+      sgplvmLogLikelihood(model,true);
+      sgplvmLogLikeGradients(model,true);
+      params = optim('sgplvmObjective', params, options, 'sgplvmGradient',model);
+      model = sgplvmExpandParam(model, params);
+      model = sgplvmCroppDimension(model,options_sgplvm);
+      params = sgplvmExtractParam(model);
+      iteration = iteration + model.fols.cropp_iter;
+    end
+  else
+    params = optim('sgplvmObjective', params,  options, 'sgplvmGradient', model);
+  end
 end
 
 model = sgplvmExpandParam(model, params);
