@@ -79,19 +79,19 @@ elseif strcmp(func2str(optim), 'fmincon')
     params = params';
 else
   % NETLAB style optimization.
-  if(model.fols.cropp&&exist('options_sgplvm','var'))
+  if(isfield(model,'fols')&&~isempty(model.fols)&&model.fols.cropp&&exist('options_sgplvm','var'))
     options(14) = model.fols.cropp_iter;
     iteration = CURRENT_ITERATION;
     if(isfield(model,'iteration')&&~isempty(model.iteration))
       iteration = iteration + model.iteration;
     end
     for(i = 1:1:round(iters/model.fols.cropp_iter))
-      model = sgplvmWeightUpdate(model,iteration,true);                                  
-      sgplvmLogLikelihood(model,true);
-      sgplvmLogLikeGradients(model,true);
+      model = sgplvmWeightUpdate(model,iteration,false);                                  
+      sgplvmLogLikelihood(model,display);
+      sgplvmLogLikeGradients(model,display);
       params = optim('sgplvmObjective', params, options, 'sgplvmGradient',model);
       model = sgplvmExpandParam(model, params);
-      model = sgplvmCroppDimension(model,options_sgplvm);
+      model = sgplvmCroppDimension(model,options_sgplvm,display);
       params = sgplvmExtractParam(model);
       iteration = iteration + model.fols.cropp_iter;
     end

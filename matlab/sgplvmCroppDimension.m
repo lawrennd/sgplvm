@@ -11,25 +11,26 @@ function model = sgplvmCroppDimension(model_in,options,verbose)
 %
 % SEEALSO : sgplvmOptimise
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, Mathieu Salzmann, 2009
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, Mathieu Salzmann, 2009, 2010
 
 % SGPLVM
 
-verbose = true;
+if(nargin<3)
+  verbose = false;
+end
 
 if(model_in.fols.cropp)
 
-  % Find new latent representation
-  
   % 1 shared
-  dim = 1:1:model_in.fols.qs;
-  if(length(dim)>1)
-    [U S V] = svd(model_in.X(:,dim));
-    X = U*S*V';
-    S2 = diag(S.*S);
+  dim_shared = 1:1:model_in.fols.qs;
+
+  if(length(dim_shared)>1)
+    [S2 V] = pca(model_in.X(:,dim_shared));
+    X = model_in.X(:,dim_shared)*V;
     S2 = S2./sum(S2);
-    dim_active = find(S2>model_in.fols.cropp_ratio);
-    Xs = X(:,dim_active);
+    dim_active_shared = find(S2>model_in.fols.cropp_ratio);
+    Xs = X(:,dim_active_shared);
+    V_shared = V(:,dim_active_shared);
     if(verbose)
       fprintf('Shared:\n');
       for(i = 1:1:length(S2))
@@ -37,21 +38,24 @@ if(model_in.fols.cropp)
       end
     end
   else
-    Xs = model_in.X(:,dim);
+    Xs = model_in.X(:,dim_shared);
   end
 
   % 2 private
   Xp = cell(model_in.numModels,1);
+  dim_active_private = cell(model_in.numModels,1);
+  V_private = cell(model_in.numModels,1);
+  dim_private = cell(model_in.numModels,1);
   start = model_in.fols.qs+1;
   for(i = 1:1:model_in.numModels)
-    dim = start:start+model_in.fols.qp(i)-1;
-    if(length(dim)>1)
-      [U S V] = svd(model_in.X(:,dim));
-      X = U*S*V';
-      S2 = diag(S.*S);
+    dim_private{i} = start:start+model_in.fols.qp(i)-1;
+    if(length(dim_private{i})>1)
+      [S2 V] = pca(model_in.X(:,dim_private{i}));
+      X = model_in.X(:,dim_private{i})*V;
       S2 = S2./sum(S2);
-      dim_active = find(S2>model_in.fols.cropp_ratio);
-      Xp{i} = X(:,dim_active);
+      dim_active_private{i} = find(S2>model_in.fols.cropp_ratio);
+      Xp{i} = X(:,dim_active_private{i});
+      V_private{i} = V(:,dim_active_private{i});
       if(verbose)
         fprintf('Private %d:\n',i);
         for(j = 1:1:length(S2))
@@ -59,7 +63,7 @@ if(model_in.fols.cropp)
         end
       end
     else
-      Xp{i} = model_in.X(:,dim);
+      Xp{i} = model_in.X(:,dim_private{i});
     end
     start = start + model_in.fols.qp(i);
   end
@@ -101,6 +105,25 @@ if(model_in.fols.cropp)
       m{i}.kern.comp{j}.inputDimension = size(X,2);
     end
   end
+
+  % inducing points
+  for(i = 1:1:length(m))
+    if(isfield(m{i},'X_u')&&~isempty(m{i}.X_u))
+      if(length(dim_shared)>1)
+        X_u = m{i}.X_u(:,dim_shared)*V_shared;
+      else
+        X_u = m{i}.X_u(:,dim_shared);
+      end
+      for(j = 1:1:length(m))
+        if(length(dim_private{j})>1)
+          X_u = [X_u m{i}.X_u(:,dim_private{j})*V_private{j}];
+        else
+          X_u = [X_u m{i}.X_u(:,dim_private{j})];
+        end
+      end
+      m{i}.X_u = X_u;
+    end
+  end
   
   % Transfer back-constraints
   if(model_in.back)
@@ -128,8 +151,8 @@ if(model_in.fols.cropp)
   end
   
   % Create cropped SGPLVM model
-  options.initX = zeros(model_in.numModels,model_in.q);
-  options.initX(1,:) = 1;
+  options.initX = zeros(model_in.numModels,q);
+  options.initX(1,:) = true;
   model = sgplvmCreate(m,[],options);
   
   % Add dynamics
@@ -175,8 +198,45 @@ if(model_in.fols.cropp)
       end
       
     end
-  
+    
   end
+
+  % Add constraints
+  if(model_in.constraint)
+    valid_model = sgplvmCroppDimensionConstraintsGetValidDimension(model_in);
+    for(i = 1:1:model_in.constraints.numConstraints)
+      nr_transfered_model = 1;
+      if(valid_model.constraint_model(i))
+        switch valid_model.type{i}
+         case 'shared'
+          dim = sgplvmGetDimension(model,'shared');
+         case 'private'
+          dim = sgplvmGetDimension(model,'private',valid_model.generating_model(i));
+         case 'generating'
+          dim = sgplvmGetDimension(model,'generative',valid_model.generating_model(i));
+        end
+        model.constraints.comp{nr_transfered_model} = model_in.constraints.comp{i};
+        model.constraints.comp{nr_transfered_model}.dim = dim;
+      end
+    end
+    if(nr_transfered_model>0)
+      model.constraint = true;
+      model.constraints.numConstraints = nr_transfered_model;
+      model.constraint_id = false*ones(model.constraints.numConstraints, ...
+                                       model.q);
+      for(i = nr_transfered_model)
+        model.constraints.comp{i} = constraintExpandParam(model.constraints.comp{i},model.X);
+        model.constraints.comp{i}.q = model.q;
+        model.constraint_id(i,model.constraints.comp{i}.dim) = true;
+      end
+    else
+      if(model_in.constraint)
+        warning('All latent-constraint has been removed');
+      end
+      model.constraint = false;
+    end
+  end
+
 
   if(verbose)
     fprintf('Cropping Dimensions\n');

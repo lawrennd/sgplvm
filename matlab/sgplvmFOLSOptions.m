@@ -8,7 +8,7 @@ function options = sgplvmFOLSOptions(type)
 %
 % SEEALSO : sgplvmCreate
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, Mathieu Salzmann, 2009
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, Mathieu Salzmann, 2009, 2010
 
 % SGPLVM
 
@@ -36,6 +36,7 @@ switch type
   options.rank.beta.decay.shift = 0;
   options.rank.beta.decay.truncate = 0;
 
+  options.rank.gamma.observed = true;
   options.rank.gamma.weight = 5e-3;
   options.rank.gamma.decay.rate = 0;
   options.rank.gamma.decay.shift = 0;

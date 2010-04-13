@@ -28,6 +28,8 @@ switch type
  case 'options'
   % create new constraints
   fhandle = str2func(['constraintCreate',options.type]);
+  options.N = model.N;
+  options.q = model.q;
   if(isfield(model,'constraints')&&~isempty(model.constraints))
     model.constraints.comp{model.constraints.numConstraints+1} = fhandle(options);
   else
@@ -55,6 +57,17 @@ switch type
     end
     model.constraints.numConstraints = m.constraints.numConstraints;
   end
+end
+
+if(~isempty(model.constraints))
+  model.constraint = true;
+else
+  model.constraint = false;
+end
+
+% update constraints
+for(i = 1:1:model.constraints.numConstraints)
+  model.constraints.comp{i} = constraintExpandParam(model.constraints.comp{i},model.X);
 end
 
 return

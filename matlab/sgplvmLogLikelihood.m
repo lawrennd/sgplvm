@@ -8,9 +8,10 @@ function ll = sgplvmLogLikelihood(model,verbose)
 %
 % SEEALSO : fgplvmLogLikelihood, sgplvmCreate
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007, 2009
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007, 2009, 2010
 %
 % MODIFICATIONS : Mathieu Salzmann, Carl Henrik Ek, 2009
+%                 Carl Henrik Ek, 2010
 
 % SGPLVM
 
@@ -18,7 +19,7 @@ if(nargin<2)
   verbose = false;
 end
 if(verbose)
-  ll_part_name = {'GP','P/Dyn','Approx','Const','Rank_A','Rank_G','CCA'};
+  ll_part_name = {'GP(recon)','Prior/Dyn','Approximation','Constraint','Rank_A(min)','Rank_G(pres)','CCA(ortho)'};
   ll_part = zeros(1,length(ll_part_name));
 end
 
@@ -111,7 +112,7 @@ end
 
 
 % 5. rank constraints
-if(isfield(model.fols,'rank')&&(model.fols.rank.alpha.weight>0))
+if(isfield(model,'fols')&&isfield(model.fols,'rank')&&(model.fols.rank.alpha.weight>0))
   start = model.fols.qs+1;
   %private ranks
   for i=1:length(model.fols.qp)
@@ -134,19 +135,19 @@ if(isfield(model.fols,'rank')&&(model.fols.rank.alpha.weight>0))
 end
 
 % 6. CCA constraints
-if(isfield(model.fols,'ortho')&&(model.fols.ortho.weight>0))
-    nd = length(model.fols.qp);
-    qsi = model.fols.qs;
-    for i=1:nd
-        Xy = model.X(:,find(model.generative_id(i,:)));
-        for j=i+1:nd
-            Xz = model.X(:,find(model.generative_id(j,:)));
-            dp = (Xy(:,qsi+1:end)'*Xz(:,qsi+1:end));%./(model.N*model.N);
-            ll = ll - model.fols.ortho.weight*trace(dp*dp');
-        end
+if(isfield(model,'fols')&&isfield(model.fols,'ortho')&&(model.fols.ortho.weight>0))
+  nd = length(model.fols.qp);
+  qsi = model.fols.qs;
+  for i=1:nd
+    Xy = model.X(:,find(model.generative_id(i,:)));
+    for j=i+1:nd
+      Xz = model.X(:,find(model.generative_id(j,:)));
+      dp = (Xy(:,qsi+1:end)'*Xz(:,qsi+1:end));%./(model.N*model.N);
+      ll = ll - model.fols.ortho.weight*trace(dp*dp');
     end
-    dp = (model.X(:,1:model.fols.qs)'*model.X(:,model.fols.qs+1:end));%./(model.N*model.N);
-    ll = ll - model.fols.ortho.weight*trace(dp*dp');
+  end
+  dp = (model.X(:,1:model.fols.qs)'*model.X(:,model.fols.qs+1:end));%./(model.N*model.N);
+  ll = ll - model.fols.ortho.weight*trace(dp*dp');
 end
 if(verbose)
   ll_part(7) = ll - sum(ll_part);

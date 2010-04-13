@@ -16,7 +16,7 @@ function g = orthoLogLikeGradients(model)
 
 
 g = zeros(1,model.N*model.q);
-if(isfield(model.fols.ortho,'weight')&&(model.fols.ortho.weight>0))
+if(isfield(model,'fols')&&~isempty(model.fols)&&isfield(model.fols.ortho,'weight')&&(model.fols.ortho.weight>0))
   nd = length(model.fols.qp);
   qsi = model.fols.qs;
   start = model.fols.qs;

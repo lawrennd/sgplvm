@@ -85,5 +85,4 @@ options.fols.ortho.decay.truncate = 0;
 % Create SGPLVM model
 model = sgplvmCreate(model,[],options);
 
-
 model = sgplvmOptimise(model,true,800,false,false,options);

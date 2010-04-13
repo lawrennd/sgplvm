@@ -141,7 +141,7 @@ for(i = 1:1:model.numModels)
   end
 end
 if(~isfield(model,'constraint'))
-  model.constraint = true;
+  model.constraint = false;
   model.constraint_id = [];
 end
 
@@ -169,7 +169,7 @@ model.X = zeros(model.N,model.q);
 if(~isfield(options,'initX')||isempty(options.initX))
   options.initX = zeros(model.numModels,model.q);
   for(i = 1:1:model.q)
-    ind = randperm(1:1:model.numModels);
+    ind = randperm(model.numModels);
     options.initX(ind(1),i) = true;
   end
 end
@@ -280,8 +280,8 @@ if(isfield(options,'fols')&&~isempty(options.fols))
   for(i = 1:1:model.numModels)
     model.fols.qp(i) = length(sgplvmGetDimension(model,'private',i));
   end
-  S = svd(model.X(:,1:model.fols.qs));
-  sS2 = sum(S.*S);
+  %S = svd(model.X(:,1:model.fols.qs));
+  %sS2 = sum(S.*S);
   for(i = 1:1:length(model.fols.qp))
     if(m{i}.isMissingData)
       index_present = m{i}.indexPresent{1};
@@ -291,9 +291,16 @@ if(isfield(options,'fols')&&~isempty(options.fols))
     else
       index_present = 1:1:m{i}.N;
     end
-    S = svd(m{i}.y(index_present,:));
-    model.fols.sumS2(i) = sum(S.*S);
-    S = svd(model.X(:,find(model.generative_id(i,:))));
+    if(options.fols.rank.gamma.observed)
+      % preserve energy spectrum of observation
+      S = svd(m{i}.y(index_present,:));
+      model.fols.sumS2(i) = sum(S.*S);
+    else
+      % preserve energy spectrum of initialisation
+      S = svd(m{i}.X(:,sgplvmGetDimension(model,'generative',i)));
+      model.fols.sumS2(i) = sum(S.*S);
+    end
+    %S = svd(model.X(:,find(model.generative_id(i,:))));
   end
   model.fols.rank.alpha.rel_alphas = model.fols.sumS2./max(model.fols.sumS2);
 end

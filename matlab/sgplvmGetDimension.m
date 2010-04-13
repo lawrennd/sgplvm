@@ -1,7 +1,25 @@
 function dim = sgplvmGetDimension(model,type,model_id)
 
-if(strcmp(type,'private')&&nargin<3)
-  error('Need to specify model id');
+% SGPLVMGETDIMENSION Returns dimensions by type from SGPLVM model
+% FORMAT
+% DESC Returns dimension by type from SGPLVM model
+% ARG model : SGPLVM model
+% ARG type : type of latent dimensions, (shared,private,generative)
+% ARG model_id : index of model into SGPLVM struct for private and
+% generative dimension
+% RETURN dim : the dimensions as a row vector
+%
+% SEEALSO : sgplvmOptions
+%
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007
+%
+% MODIFICATIONS : Carl Henrik Ek, 2010
+
+% SGPLVM
+
+
+if(~strcmp(type,'shared')&&nargin<3)
+  error('Need to specify model id when requesting private or generative dimensions');
 end
 if(nargin<3)
   model_id = [];
@@ -33,7 +51,7 @@ switch type
       dim = [dim i];
     end
   end
- case 'generative'
+ case {'generative','generating'}
   dim = find(model.generative_id(model_id,:));
 end
 
