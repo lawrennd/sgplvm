@@ -9,3 +9,7 @@ dir: html
 ~/mlprojects/sgplvm/html/latent1.png
 ~/mlprojects/sgplvm/html/latent2.png
 ~/mlprojects/sgplvm/html/mode9_bottom.png
+~/mlprojects/sgplvm/html/data.png
+~/mlprojects/sgplvm/html/fols.png
+~/mlprojects/sgplvm/html/observed.png
+
