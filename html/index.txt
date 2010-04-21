@@ -73,26 +73,35 @@ direction. The model is initialised using the NCCA consolidation.
 
 
 <p><center><img src="K_sil.png" width="29%"><img src="K_pose.png" width="29%"><br>
-
-
-
-Kernel matrices to which NCCA consolidation is used to initialise the
-
-SGP-LVM model.
-
+Kernel matrices to which NCCA consolidation is used to initialise the SGP-LVM model.
+</center>
 
 
 <p><center><img src="latent1.png" width="29%"><img src="mode1.png" width="29%"><br>
-
-
-
 Unimodal silhouette. 
-
+</center>
 
 
 <p><center><img src="latent2.png" width="29%"><img src="mode9_top.png" width="29%"><img src="mode9_bottom.png" width="29%"><br>
-
-
-
 Bi-modal silhouette
+</center></p>
 
+<br>
+<br>
+<h3>SGP-LVM FOLS</h3>
+
+<p><code>
+&gt;&gt; dem_sgplvm_fols
+</code>
+<br>
+<br>
+
+Demo script that generates the toy example shown in Figure 1 in the paper <it> Factorized Orthogonal Latent Spaces, Salzmann et. al. </it>.
+
+<p><center><img src="data.png" width="29%"><img src="observed.png" width="29%"><br>
+Observed data used for the example. Each observed space is the projection of the circle in the left most image onto each separate axis as shown in the right image.
+</center>
+
+<p><center><img src="fols.png" width="29%"><br>
+The resulting embedding after learning a SGPLVM-FOLS model. The data is factorized into a single shared dimension and one single private dimension associated with each observed data space.
+</center>
