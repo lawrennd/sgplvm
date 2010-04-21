@@ -86,3 +86,13 @@ options.fols.ortho.decay.truncate = 0;
 model = sgplvmCreate(model,[],options);
 
 model = sgplvmOptimise(model,true,800,false,false,options);
+
+% display results
+figure(1);
+plot(Pxy(:,1),Pxy(:,2));
+figure(2);
+plot(model.X(:,1),'b');
+hold on;
+plot(model.X(:,2),'c');
+plot(model.X(:,3),'g');
+legend({'Shared','Private Y1','Private Y2'});
