@@ -1,3 +1,10 @@
+% DEM_SGPLVM_FOLS Runs Demo of FOLS SGPLVM model
+% FORMAT
+% DESC None
+% ARG : None
+
+% SGPLVM
+
 clear all;
 close all;
 
