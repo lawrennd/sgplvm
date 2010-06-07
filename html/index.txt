@@ -14,6 +14,10 @@ RELEASEINFORMATION
 
 <h3>Current Release</h3>
 
+Updated relese with FOLS model from AISTATS 2010 added.
+
+<h4>Version 0.05</h4>
+
 First release of software.
 
 <h2>Examples</h2>
