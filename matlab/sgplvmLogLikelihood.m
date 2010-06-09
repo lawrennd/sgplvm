@@ -103,7 +103,7 @@ end
 % 4. constraint
 if(isfield(model,'constraints')&&~isempty(model.constraints))
   for(i = 1:1:model.constraints.numConstraints)
-    ll = ll - constraintLogLikelihood(model.constraints.comp{i},model.X);
+    ll = ll + constraintLogLikelihood(model.constraints.comp{i},model.X);
   end
 end
 if(verbose)

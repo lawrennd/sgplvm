@@ -1,5 +1,22 @@
 function X = sgplvmInitialiseLatentPointFromShared(model,Xs,index_out,type,N,verbose)
 
+% SGPLVMINITIALISELATENTPOINTFROMSHARED Initialise latent location given observation(s)
+% FORMAT
+% DESC Initialise latent location for given observation(s)
+% ARG model : sgplvm model
+% ARG Xs : shared latent location
+% ARG index_out : component index to output generating model
+% ARG type : type of initialisation (default NN)
+% ARG N : optional argument for type
+% ARG verbose :
+% RETURN X : latent location of initialisation
+%
+% SEEALSO : sgplvmInitialiseLatentSequence, sgplvmInitialiseLatentPoint, sgplvmSequenceOut
+%
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2008
+
+% SGPLVM
+
 if(nargin<6)
   verbose = false;
   if(nargin<5)

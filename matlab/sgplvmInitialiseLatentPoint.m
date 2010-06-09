@@ -105,6 +105,18 @@ if(~isempty(dim_nbc))
     class = nn_class(model.comp{model_id}.y,Y(model_id_index,:),N,'euclidean');
     X(:,dim_nbc) = model.comp{model_id}.X(class,dim_nbc);
     clear tmp,tmp2;
+   case {'nn_concat','NN_concat'}
+    model_id = find(model.generative_id(:,dim_nbc));
+    model_id = intersect(model_id,index_in);
+    y_train = [];
+    y_test = [];
+    for(i = 1:1:length(model_id))
+      y_train = [y_train model.comp{model_id(i)}.y];
+      y_test = [y_test Y{i}];
+    end
+    class = nn_class(y_train,y_class,N,'euclidean');
+    X(:,dim_nbc) = model.comp{model_id(1)}.X(class,dim_nbc);
+    clear y_train, y_test;
    case {'nn_dim','NN_DIM'}
     % Nearest Neighbor over each remaining dimension in turn
     for(i = 1:1:length(dim_nbc))
