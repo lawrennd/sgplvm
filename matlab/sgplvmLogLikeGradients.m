@@ -212,7 +212,7 @@ if(verbose)
 end
 
 % orthogonality constraints
-g_ortho = ortohoLogLikeGradients(model);
+g_ortho = orthoLogLikeGradients(model);
 
 if(model.back&&~isempty(g_ortho))
   g_ortho_back = [];

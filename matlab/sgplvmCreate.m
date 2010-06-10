@@ -10,7 +10,9 @@ function model = sgplvmCreate(m,void,options)
 %
 % SEEALSO : sgplvmOptions
 %
-% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, Mathieu Salzmann, 2007, 2009
+% COPYRIGHT : Neil D. Lawrence, Carl Henrik Ek, 2007
+%
+% COPYRIGHT : Mathieu Salzmann, Carl Henrik Ek, 2009
 %
 % MODIFICATIONS : Carl Henrik Ek, Mathieu Salzmann, 2009
 

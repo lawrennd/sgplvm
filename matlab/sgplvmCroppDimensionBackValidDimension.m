@@ -1,6 +1,6 @@
-function valid_model = sgplvmCroppDimensionBackGetValidDimension(model)
+function valid_model = sgplvmCroppDimensionBackValidDimension(model)
 
-% SGPLVMCROPPDIMENSIONBACKGETVALIDDIMENSION Returns valid
+% SGPLVMCROPPDIMENSIONBACKVALIDDIMENSION Returns valid
 % back constraints for dimension cropping
 % DESC Returns the back-constraints that are valid when cropping
 % dimension of a model. This means constraints that are either

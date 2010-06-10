@@ -12,7 +12,7 @@ function model = sgplvmAddConstraint(model,param1);
 %
 % SEEALSO : constraintOptions
 
-% FGPLVM
+% SGPLVM
 
 
 if(isfield(model,'type')&&strcmp(model.type,'fgplvm'))
