@@ -12,4 +12,3 @@ dir: html
 ~/mlprojects/sgplvm/html/data.png
 ~/mlprojects/sgplvm/html/fols.png
 ~/mlprojects/sgplvm/html/observed.png
-
